@@ -16,11 +16,12 @@ import { DatepickerFocusService } from './providers/datepicker-focus.service';
 import { LocaleHelperService } from './providers/locale-helper.service';
 import { NO_OF_DAYS_IN_A_WEEK } from './utils/constants';
 import { ClrDayOfWeek } from './interfaces/day-of-week.interface';
+import { DateIntervalModel } from './model/date-interval.model';
 
 @Component({ selector: 'clr-calendar', templateUrl: './calendar.html' })
 export class ClrCalendar implements OnDestroy {
   private _subs: Subscription[] = [];
-
+  public dateInterval: DateIntervalModel;
   constructor(
     private _localeHelperService: LocaleHelperService,
     private _dateNavigationService: DateNavigationService,
@@ -81,6 +82,12 @@ export class ClrCalendar implements OnDestroy {
     this._subs.push(
       this._dateNavigationService.focusOnCalendarChange.subscribe(() => {
         this._datepickerFocusService.focusCell(this._elRef);
+      })
+    );
+
+    this._subs.push(
+      this._dateNavigationService.dateIntervalChange.subscribe(dateInterval => {
+        this.dateInterval = dateInterval;
       })
     );
   }

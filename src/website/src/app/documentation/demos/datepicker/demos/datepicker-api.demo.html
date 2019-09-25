@@ -6,7 +6,7 @@
 </p>
 <form class="datepicker-demo" clrForm clrLayout="vertical">
     <clr-date-container>
-        <input type="date" clrDate name="demo" [(ngModel)]="demo">
+        <input type="date" clrDate [clrMin]="minDate" [clrMax]="maxDate" name="demo" [(ngModel)]="demo">
     </clr-date-container>
 </form>
 <clr-code-snippet [clrCode]="htmlExample"></clr-code-snippet>

@@ -5,10 +5,11 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { Subject } from 'rxjs';
 import { CalendarModel } from '../model/calendar.model';
 import { DayModel } from '../model/day.model';
+import { DateIntervalModel } from '../model/date-interval.model';
 
 /**
  * This service is responsible for:
@@ -125,6 +126,10 @@ export class DateNavigationService {
     this._focusOnCalendarChange.next();
   }
 
+  updateDateInterval(dateInterval: DateIntervalModel) {
+    this._dateIntervalChange.next(dateInterval);
+  }
+
   private _displayedCalendarChange: Subject<void> = new Subject<void>();
 
   /**
@@ -150,5 +155,16 @@ export class DateNavigationService {
    */
   get focusedDayChange(): Observable<DayModel> {
     return this._focusedDayChange.asObservable();
+  }
+
+  /**
+   * This observable lets the subscriber know that the datepicker has a date interval which restricts some periods
+   */
+  private _dateIntervalChange: BehaviorSubject<DateIntervalModel> = new BehaviorSubject<DateIntervalModel>(
+    new DateIntervalModel(null, null)
+  );
+
+  get dateIntervalChange(): Observable<DateIntervalModel> {
+    return this._dateIntervalChange.asObservable();
   }
 }

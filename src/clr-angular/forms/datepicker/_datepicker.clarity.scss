@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2018 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2016-2019 VMware, Inc. All Rights Reserved.
 // This software is released under MIT license.
 // The full license information can be found in LICENSE in the root directory of this project.
 
@@ -158,6 +158,14 @@
       font-weight: $clr-calendar-today-date-cell-font-weight;
     }
 
+    &.is-excluded {
+      opacity: 0.25;
+
+      &:hover {
+        background: none;
+      }
+    }
+
     &.is-selected {
       background: $clr-calendar-active-cell-background-color;
       color: $clr-calendar-active-cell-color;
@@ -169,7 +177,7 @@
 
     &.is-disabled {
       opacity: 0.25;
-
+      pointer-events: none;
       &:hover {
         background: none;
       }
@@ -228,6 +236,14 @@
     font-size: $clr-calendar-picker-btn-font-size;
     font-weight: $clr-calendar-picker-btn-font-weight;
     outline-offset: -5px; //needed for chrome
+
+    &.is-disabled {
+      opacity: 0.25;
+      pointer-events: none;
+      &:hover {
+        background: none;
+      }
+    }
 
     &.is-selected {
       background: $clr-calendar-active-cell-background-color;

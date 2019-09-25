@@ -36,7 +36,7 @@ export default function() {
       it('renders the content based on the input provided', function() {
         expect(context.clarityElement.textContent.trim()).toMatch('1');
 
-        context.testComponent.dayView = new DayViewModel(new DayModel(2018, 0, 25), false, false, false, false);
+        context.testComponent.dayView = new DayViewModel(new DayModel(2018, 0, 25), false, false, false, false, false);
         context.detectChanges();
 
         expect(context.clarityElement.textContent.trim()).toMatch('25');
@@ -75,18 +75,18 @@ export default function() {
         expect(button.classList.contains('is-selected')).toBe(false);
       });
 
-      it('adds the .is-disabled class to the button when the input day view is selected', function() {
+      it('adds the .is-excluded class to the button when the input day view is selected', function() {
         const button: HTMLButtonElement = context.clarityElement.children[0];
-        expect(button.classList.contains('is-disabled')).toBe(false);
-        context.testComponent.dayView.isDisabled = true;
+        expect(button.classList.contains('is-excluded')).toBe(false);
+        context.testComponent.dayView.isNotInMonth = true;
 
         context.detectChanges();
-        expect(button.classList.contains('is-disabled')).toBe(true);
+        expect(button.classList.contains('is-excluded')).toBe(true);
 
-        context.testComponent.dayView.isDisabled = false;
+        context.testComponent.dayView.isNotInMonth = false;
 
         context.detectChanges();
-        expect(button.classList.contains('is-disabled')).toBe(false);
+        expect(button.classList.contains('is-excluded')).toBe(false);
       });
 
       it('sets the right tabindex if the day is focusable', function() {
@@ -138,7 +138,7 @@ export default function() {
         expect(context.clarityDirective.dayView.dayModel.year).toBe(2018);
         expect(context.clarityDirective.dayView.isTodaysDate).toBe(false);
         expect(context.clarityDirective.dayView.isSelected).toBe(false);
-        expect(context.clarityDirective.dayView.isDisabled).toBe(false);
+        expect(context.clarityDirective.dayView.isNotInMonth).toBe(false);
         expect(context.clarityDirective.dayView.isFocusable).toBe(false);
       });
     });
@@ -222,7 +222,7 @@ export default function() {
 })
 class TestComponent {
   isToday: boolean = false;
-  isDisabled: boolean = false;
+  isNotInMonth: boolean = false;
   isSelected: boolean = false;
   isFocusable: boolean = false;
   dayModel: DayModel = new DayModel(2018, 0, 1);
@@ -230,7 +230,7 @@ class TestComponent {
   dayView: DayViewModel = new DayViewModel(
     this.dayModel,
     this.isToday,
-    this.isDisabled,
+    this.isNotInMonth,
     this.isSelected,
     this.isFocusable
   );

@@ -12,6 +12,8 @@ import { DateNavigationService } from './providers/date-navigation.service';
 import { DatepickerFocusService } from './providers/datepicker-focus.service';
 import { ViewManagerService } from './providers/view-manager.service';
 import { ClrCommonStringsService } from '../../utils/i18n/common-strings.service';
+import { Subscription } from 'rxjs';
+import { DateIntervalModel } from './model/date-interval.model';
 
 @Component({
   selector: 'clr-yearpicker',
@@ -49,6 +51,7 @@ import { ClrCommonStringsService } from '../../utils/i18n/common-strings.service
                 class="calendar-btn year"
                 [attr.tabindex]="getTabIndex(year)"
                 [class.is-selected]="year === calendarYear"
+                [class.is-disabled]="disableYear(year)"
                 (click)="changeYear(year)">
                 {{year}}
             </button>
@@ -59,6 +62,8 @@ import { ClrCommonStringsService } from '../../utils/i18n/common-strings.service
   },
 })
 export class ClrYearpicker implements AfterViewInit {
+  public subs: Subscription[] = [];
+  public dateInterval: DateIntervalModel;
   constructor(
     private _dateNavigationService: DateNavigationService,
     private _viewManagerService: ViewManagerService,
@@ -69,6 +74,11 @@ export class ClrYearpicker implements AfterViewInit {
     this.yearRangeModel = new YearRangeModel(this.calendarYear);
     this._focusedYear = this.calendarYear;
     this.updateRange(this.yearRangeModel);
+    this.subs.push(
+      this._dateNavigationService.dateIntervalChange.subscribe(dateInterval => {
+        this.dateInterval = dateInterval;
+      })
+    );
   }
 
   get ariaLiveDecadeText(): string {
@@ -119,6 +129,10 @@ export class ClrYearpicker implements AfterViewInit {
   changeYear(year: number): void {
     this._dateNavigationService.changeYear(year);
     this._viewManagerService.changeToDayView();
+  }
+
+  disableYear(year) {
+    return !this.dateInterval.isYearInInterval(year);
   }
 
   /**
@@ -205,5 +219,9 @@ export class ClrYearpicker implements AfterViewInit {
     this._datepickerFocusService.focusCell(this._elRef);
 
     // update the value for  decade range
+  }
+
+  ngOnDestroy(): void {
+    this.subs.forEach(sub => sub.unsubscribe());
   }
 }
