@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 VMware, Inc. All Rights Reserved.
+ * Copyright (c) 2016-2019 VMware, Inc. All Rights Reserved.
  * This software is released under MIT license.
  * The full license information can be found in LICENSE in the root directory of this project.
  */
@@ -11,6 +11,7 @@ import { DateNavigationService } from './providers/date-navigation.service';
 import { DatepickerFocusService } from './providers/datepicker-focus.service';
 import { LocaleHelperService } from './providers/locale-helper.service';
 import { ViewManagerService } from './providers/view-manager.service';
+import { DateIOService } from './providers/date-io.service';
 
 @Component({
   selector: 'clr-monthpicker',
@@ -21,6 +22,7 @@ import { ViewManagerService } from './providers/view-manager.service';
             *ngFor="let month of monthNames; let monthIndex = index"
             (click)="changeMonth(monthIndex)"
             [class.is-selected]="monthIndex === calendarMonthIndex"
+            [class.is-disabled]="disableMonth(monthIndex)"
             [attr.tabindex]="getTabIndex(monthIndex)">
             {{month}}
         </button>
@@ -34,6 +36,7 @@ export class ClrMonthpicker implements AfterViewInit {
     private _viewManagerService: ViewManagerService,
     private _localeHelperService: LocaleHelperService,
     private _dateNavigationService: DateNavigationService,
+    private _dateIOService: DateIOService,
     private _datepickerFocusService: DatepickerFocusService,
     private _elRef: ElementRef
   ) {
@@ -61,12 +64,26 @@ export class ClrMonthpicker implements AfterViewInit {
   }
 
   /**
+   * Gets the year value of the Calendar.
+   */
+  get calendarYear(): number {
+    return this._dateNavigationService.displayedCalendar.year;
+  }
+
+  /**
    * Calls the DateNavigationService to update the month value of the calendar.
    * Also changes the view to the daypicker.
    */
   changeMonth(monthIndex: number) {
     this._dateNavigationService.changeMonth(monthIndex);
     this._viewManagerService.changeToDayView();
+  }
+
+  /**
+   * Checks what months of the calendar should be disabled
+   */
+  disableMonth(monthIndex: number) {
+    return !this._dateIOService.dateInterval.isMonthInInterval(monthIndex, this.calendarYear);
   }
 
   /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 VMware, Inc. All Rights Reserved.
+ * Copyright (c) 2016-2019 VMware, Inc. All Rights Reserved.
  * This software is released under MIT license.
  * The full license information can be found in LICENSE in the root directory of this project.
  */
@@ -74,7 +74,7 @@ export default function(): void {
       for (const day of dayViewModel) {
         expect(day.dayModel.year).toBe(year);
         expect(day.dayModel.month).toBe(month);
-        expect(day.isDisabled).toBe(flag);
+        expect(day.isNotInMonth).toBe(flag);
       }
     }
 
@@ -100,15 +100,15 @@ export default function(): void {
           if (prevDays.length > 0) {
             expect(prevDays[0]).toBe(day.dayModel.date);
             prevDays.splice(0, 1);
-            expect(day.isDisabled).toBe(true);
+            expect(day.isNotInMonth).toBe(true);
           } else if (count <= noOfCurrDays) {
             expect(count).toBe(day.dayModel.date);
-            expect(day.isDisabled).toBe(false);
+            expect(day.isNotInMonth).toBe(false);
             count++;
           } else if (nextDays.length > 0) {
             expect(nextDays[0]).toBe(day.dayModel.date);
             nextDays.splice(0, 1);
-            expect(day.isDisabled).toBe(true);
+            expect(day.isNotInMonth).toBe(true);
           }
         }
       }

@@ -12,6 +12,7 @@ import { DayViewModel } from './model/day-view.model';
 import { DayModel } from './model/day.model';
 import { DateFormControlService } from './providers/date-form-control.service';
 import { DateNavigationService } from './providers/date-navigation.service';
+import { DateIOService } from './providers/date-io.service';
 
 @Component({
   selector: 'clr-day',
@@ -20,6 +21,7 @@ import { DateNavigationService } from './providers/date-navigation.service';
             class="day-btn"
             type="button"
             [class.is-today]="dayView.isTodaysDate"
+            [class.is-excluded]="dayView.isNotInMonth"
             [class.is-disabled]="dayView.isDisabled"
             [class.is-selected]="dayView.isSelected"
             [attr.tabindex]="dayView.tabIndex"
@@ -37,6 +39,7 @@ export class ClrDay {
 
   constructor(
     private _dateNavigationService: DateNavigationService,
+    private _dateIOService: DateIOService,
     private _ifOpenService: IfOpenService,
     private dateFormControlService: DateFormControlService
   ) {}
@@ -47,6 +50,9 @@ export class ClrDay {
 
   @Input('clrDayView')
   public set dayView(day: DayViewModel) {
+    if (!this._dateIOService.dateInterval.isDayInInterval(day.dayModel.toDate())) {
+      day.isDisabled = true;
+    }
     this._dayView = day;
     this.dayString = this._dayView.dayModel.toDateString();
   }

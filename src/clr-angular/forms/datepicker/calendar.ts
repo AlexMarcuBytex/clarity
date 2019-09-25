@@ -20,7 +20,6 @@ import { ClrDayOfWeek } from './interfaces/day-of-week.interface';
 @Component({ selector: 'clr-calendar', templateUrl: './calendar.html' })
 export class ClrCalendar implements OnDestroy {
   private _subs: Subscription[] = [];
-
   constructor(
     private _localeHelperService: LocaleHelperService,
     private _dateNavigationService: DateNavigationService,

@@ -5,10 +5,11 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { Subject } from 'rxjs';
 import { CalendarModel } from '../model/calendar.model';
 import { DayModel } from '../model/day.model';
+import { DateIntervalModel } from '../model/date-interval.model';
 
 /**
  * This service is responsible for:

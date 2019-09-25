@@ -12,6 +12,7 @@ import { DateNavigationService } from './providers/date-navigation.service';
 import { DatepickerFocusService } from './providers/datepicker-focus.service';
 import { ViewManagerService } from './providers/view-manager.service';
 import { ClrCommonStringsService } from '../../utils/i18n/common-strings.service';
+import { DateIOService } from './providers/date-io.service';
 
 @Component({
   selector: 'clr-yearpicker',
@@ -49,6 +50,7 @@ import { ClrCommonStringsService } from '../../utils/i18n/common-strings.service
                 class="calendar-btn year"
                 [attr.tabindex]="getTabIndex(year)"
                 [class.is-selected]="year === calendarYear"
+                [class.is-disabled]="disableYear(year)"
                 (click)="changeYear(year)">
                 {{year}}
             </button>
@@ -61,6 +63,7 @@ import { ClrCommonStringsService } from '../../utils/i18n/common-strings.service
 export class ClrYearpicker implements AfterViewInit {
   constructor(
     private _dateNavigationService: DateNavigationService,
+    private _dateIOService: DateIOService,
     private _viewManagerService: ViewManagerService,
     private _datepickerFocusService: DatepickerFocusService,
     private _elRef: ElementRef,
@@ -119,6 +122,13 @@ export class ClrYearpicker implements AfterViewInit {
   changeYear(year: number): void {
     this._dateNavigationService.changeYear(year);
     this._viewManagerService.changeToDayView();
+  }
+
+  /**
+   * Checks what years of the calendar should be disabled
+   */
+  disableYear(year) {
+    return !this._dateIOService.dateInterval.isYearInInterval(year);
   }
 
   /**

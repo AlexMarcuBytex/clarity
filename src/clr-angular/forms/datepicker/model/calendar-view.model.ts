@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 VMware, Inc. All Rights Reserved.
+ * Copyright (c) 2016-2019 VMware, Inc. All Rights Reserved.
  * This software is released under MIT license.
  * The full license information can be found in LICENSE in the root directory of this project.
  */
@@ -83,9 +83,9 @@ export class CalendarViewModel {
   /**
    * Generates a DayViewModel array based on the DayModel passed
    */
-  private generateDayViewModels(days: DayModel[], isDisabled: boolean, isCurrentCalendar: boolean): DayViewModel[] {
+  private generateDayViewModels(days: DayModel[], isNotInMonth: boolean, isCurrentCalendar: boolean): DayViewModel[] {
     const dayViews: DayViewModel[] = days.map(day => {
-      return new DayViewModel(day, false, isDisabled, false, false);
+      return new DayViewModel(day, false, isNotInMonth, false, false);
     });
     if (isCurrentCalendar && this.calendar.isDayInCalendar(this.today)) {
       dayViews[this.today.date - 1].isTodaysDate = true;

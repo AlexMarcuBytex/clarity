@@ -38,6 +38,7 @@ import { DateNavigationService } from './providers/date-navigation.service';
 import { DatepickerEnabledService } from './providers/datepicker-enabled.service';
 import { DatepickerFocusService } from './providers/datepicker-focus.service';
 import { datesAreEqual } from './utils/date-utils';
+import { DateIntervalModel } from './model/date-interval.model';
 
 // There are four ways the datepicker value is set
 // 1. Value set by user typing into text input as a string ex: '01/28/2015'
@@ -64,6 +65,30 @@ export class ClrDateInput extends WrappedFormControl<ClrDateContainer> implement
     if (!this.initialClrDateInputValue) {
       this.initialClrDateInputValue = date;
     }
+  }
+
+  private _min: Date = null;
+
+  @Input('clrMin')
+  set min(date: Date) {
+    if (date instanceof Date) {
+      this._min = date;
+    }
+  }
+  get min() {
+    return this._min;
+  }
+
+  private _max: Date = null;
+
+  @Input('clrMax')
+  set max(date: Date) {
+    if (date instanceof Date) {
+      this._max = date;
+    }
+  }
+  get max() {
+    return this._max;
   }
 
   protected index = 1;
@@ -93,6 +118,7 @@ export class ClrDateInput extends WrappedFormControl<ClrDateContainer> implement
   ngOnInit() {
     super.ngOnInit();
     this.populateServicesFromContainerComponent();
+    this.configureDateInterval();
 
     this.subscriptions.push(
       this.listenForUserSelectedDayChanges(),
@@ -267,5 +293,13 @@ export class ClrDateInput extends WrappedFormControl<ClrDateContainer> implement
     return this.dateNavigationService.selectedDayChange
       .pipe(filter(date => !!date))
       .subscribe(v => this.datepickerFocusService.focusInput(this.el.nativeElement));
+  }
+
+  private configureDateInterval() {
+    // flip values in case of passing dates in opposite inputs
+    if (this.min && this.max && this.min > this.max) {
+      [this.min, this.max] = [this.max, this.min];
+    }
+    this.dateIOService.updateDateInterval(new DateIntervalModel(this.min, this.max));
   }
 }

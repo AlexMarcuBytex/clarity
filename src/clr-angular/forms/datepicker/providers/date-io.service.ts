@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 VMware, Inc. All Rights Reserved.
+ * Copyright (c) 2016-2019 VMware, Inc. All Rights Reserved.
  * This software is released under MIT license.
  * The full license information can be found in LICENSE in the root directory of this project.
  */
@@ -21,9 +21,11 @@ import {
 import { getNumberOfDaysInTheMonth, parseToFourDigitYear } from '../utils/date-utils';
 
 import { LocaleHelperService } from './locale-helper.service';
+import { DateIntervalModel } from '../model/date-interval.model';
 
 @Injectable()
 export class DateIOService {
+  private _dateInterval: DateIntervalModel;
   public cldrLocaleDateFormat: string = DEFAULT_LOCALE_FORMAT;
   private localeDisplayFormat: InputDateDisplayFormat = LITTLE_ENDIAN;
   private delimiters: [string, string] = ['/', '/'];
@@ -83,6 +85,10 @@ export class DateIOService {
       }
     }
     return '';
+  }
+
+  get dateInterval() {
+    return this._dateInterval;
   }
 
   get placeholderText(): string {
@@ -152,5 +158,9 @@ export class DateIOService {
       // secondPart is month && thirdPart is date
       return this.validateAndGetDate(firstPart, secondPart, thirdPart);
     }
+  }
+
+  updateDateInterval(dateInterval: DateIntervalModel) {
+    this._dateInterval = dateInterval;
   }
 }
