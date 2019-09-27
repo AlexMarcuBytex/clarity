@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 VMware, Inc. All Rights Reserved.
+ * Copyright (c) 2016-2019 VMware, Inc. All Rights Reserved.
  * This software is released under MIT license.
  * The full license information can be found in LICENSE in the root directory of this project.
  */
@@ -21,6 +21,7 @@ import { ViewManagerService } from './providers/view-manager.service';
             *ngFor="let month of monthNames; let monthIndex = index"
             (click)="changeMonth(monthIndex)"
             [class.is-selected]="monthIndex === calendarMonthIndex"
+            [class.is-disabled]="disableMonth(monthIndex)"
             [attr.tabindex]="getTabIndex(monthIndex)">
             {{month}}
         </button>
@@ -30,6 +31,7 @@ import { ViewManagerService } from './providers/view-manager.service';
   },
 })
 export class ClrMonthpicker implements AfterViewInit {
+  private dateFilter: (date: Date) => boolean;
   constructor(
     private _viewManagerService: ViewManagerService,
     private _localeHelperService: LocaleHelperService,
@@ -38,6 +40,9 @@ export class ClrMonthpicker implements AfterViewInit {
     private _elRef: ElementRef
   ) {
     this._focusedMonthIndex = this.calendarMonthIndex;
+    this._dateNavigationService.filterDateChange.subscribe(filter => {
+      this.dateFilter = filter;
+    });
   }
 
   /**
@@ -61,6 +66,13 @@ export class ClrMonthpicker implements AfterViewInit {
   }
 
   /**
+   * Gets the year value of the Calendar.
+   */
+  get calendarYearIndex(): number {
+    return this._dateNavigationService.displayedCalendar.year;
+  }
+
+  /**
    * Calls the DateNavigationService to update the month value of the calendar.
    * Also changes the view to the daypicker.
    */
@@ -74,6 +86,30 @@ export class ClrMonthpicker implements AfterViewInit {
    */
   getTabIndex(monthIndex: number): number {
     return monthIndex === this._focusedMonthIndex ? 0 : -1;
+  }
+
+  /**
+   * Disable a month based on restrictions set by the user
+   */
+  disableMonth(monthIndex) {
+    // if no filter is received, do not disable any date
+    if (!this.dateFilter) {
+      return false;
+    }
+
+    const firstOfMonth = new Date(this.calendarYearIndex, monthIndex, 1);
+
+    // If each date in the month is invalid, mark the month as disabled.
+    for (let date = firstOfMonth; date.getMonth() === monthIndex; date = this.nextDay(date)) {
+      if (this.dateFilter(date)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private nextDay(date: Date) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
   }
 
   /**

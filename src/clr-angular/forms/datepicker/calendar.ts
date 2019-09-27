@@ -20,7 +20,7 @@ import { ClrDayOfWeek } from './interfaces/day-of-week.interface';
 @Component({ selector: 'clr-calendar', templateUrl: './calendar.html' })
 export class ClrCalendar implements OnDestroy {
   private _subs: Subscription[] = [];
-
+  private dateFilter: (date: Date) => boolean;
   constructor(
     private _localeHelperService: LocaleHelperService,
     private _dateNavigationService: DateNavigationService,
@@ -81,6 +81,11 @@ export class ClrCalendar implements OnDestroy {
     this._subs.push(
       this._dateNavigationService.focusOnCalendarChange.subscribe(() => {
         this._datepickerFocusService.focusCell(this._elRef);
+      })
+    );
+    this._subs.push(
+      this._dateNavigationService.filterDateChange.subscribe(filter => {
+        this.dateFilter = filter;
       })
     );
   }

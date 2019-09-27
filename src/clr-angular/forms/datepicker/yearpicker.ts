@@ -49,6 +49,7 @@ import { ClrCommonStringsService } from '../../utils/i18n/common-strings.service
                 class="calendar-btn year"
                 [attr.tabindex]="getTabIndex(year)"
                 [class.is-selected]="year === calendarYear"
+                [class.is-disabled]="disableYear(year)"
                 (click)="changeYear(year)">
                 {{year}}
             </button>
@@ -59,6 +60,7 @@ import { ClrCommonStringsService } from '../../utils/i18n/common-strings.service
   },
 })
 export class ClrYearpicker implements AfterViewInit {
+  private dateFilter: (date: Date) => boolean;
   constructor(
     private _dateNavigationService: DateNavigationService,
     private _viewManagerService: ViewManagerService,
@@ -69,6 +71,9 @@ export class ClrYearpicker implements AfterViewInit {
     this.yearRangeModel = new YearRangeModel(this.calendarYear);
     this._focusedYear = this.calendarYear;
     this.updateRange(this.yearRangeModel);
+    this._dateNavigationService.filterDateChange.subscribe(filter => {
+      this.dateFilter = filter;
+    });
   }
 
   get ariaLiveDecadeText(): string {
@@ -164,6 +169,30 @@ export class ClrYearpicker implements AfterViewInit {
       }
     }
     return this._focusedYear === year ? 0 : -1;
+  }
+
+  /**
+   * Disable a year based on restrictions set by the user
+   */
+  disableYear(year) {
+    // if no filter is received, do not disable any date
+    if (!this.dateFilter) {
+      return false;
+    }
+
+    const firstOfYear = new Date(year, 0, 1);
+
+    // If each date in the year is invalid, mark the year as disabled.
+    for (let date = firstOfYear; date.getFullYear() === year; date = this.nextDay(date)) {
+      if (this.dateFilter(date)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private nextDay(date: Date) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
   }
 
   /**

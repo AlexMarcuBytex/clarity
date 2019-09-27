@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 VMware, Inc. All Rights Reserved.
+ * Copyright (c) 2016-2019 VMware, Inc. All Rights Reserved.
  * This software is released under MIT license.
  * The full license information can be found in LICENSE in the root directory of this project.
  */
@@ -23,6 +23,7 @@ import { NgModelAutoWrappedDatepickerDemo } from './ngmodel-auto-wrapped';
 import { NgModelExplicitWrapperDemo } from './ngmodel-wrapper-explicit-wrapper';
 import { DisabledDemo } from './disabled';
 import { DatepickerLayoutDemo } from './layout';
+import { DatepickerFilterDemo } from './datepicker-filter';
 
 const ROUTES: Routes = [
   {
@@ -38,6 +39,7 @@ const ROUTES: Routes = [
       { path: 'reactive-forms', component: DatepickerInReactiveForms },
       { path: 'css-regression', component: DatepickerCSSRegressionDemo },
       { path: 'disabled', component: DisabledDemo },
+      { path: 'date-filter', component: DatepickerFilterDemo },
       { path: 'layout', component: DatepickerLayoutDemo },
       {
         path: 'locale-data',

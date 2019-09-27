@@ -53,6 +53,7 @@ import { datesAreEqual } from './utils/date-utils';
   providers: [DatepickerFocusService],
 })
 export class ClrDateInput extends WrappedFormControl<ClrDateContainer> implements OnInit, AfterViewInit, OnDestroy {
+  private _dateFilter: (date: Date) => boolean;
   @Input() placeholder: string;
   @Output('clrDateChange') dateChange: EventEmitter<Date> = new EventEmitter<Date>(false);
   @Input('clrDate')
@@ -64,6 +65,11 @@ export class ClrDateInput extends WrappedFormControl<ClrDateContainer> implement
     if (!this.initialClrDateInputValue) {
       this.initialClrDateInputValue = date;
     }
+  }
+  @Input('clrFilter')
+  set dateFilter(value: (date: Date) => boolean) {
+    this._dateFilter = value;
+    this.dateNavigationService.updateDateFilter(this._dateFilter);
   }
 
   protected index = 1;
@@ -93,6 +99,7 @@ export class ClrDateInput extends WrappedFormControl<ClrDateContainer> implement
   ngOnInit() {
     super.ngOnInit();
     this.populateServicesFromContainerComponent();
+    // this.applyFilter();
 
     this.subscriptions.push(
       this.listenForUserSelectedDayChanges(),
