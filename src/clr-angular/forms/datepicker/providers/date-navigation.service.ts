@@ -5,7 +5,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { Subject } from 'rxjs';
 import { CalendarModel } from '../model/calendar.model';
 import { DayModel } from '../model/day.model';
@@ -125,6 +125,10 @@ export class DateNavigationService {
     this._focusOnCalendarChange.next();
   }
 
+  updateDateFilter(value: (date: Date | null) => boolean) {
+    this._filterDateChange.next(value);
+  }
+
   private _displayedCalendarChange: Subject<void> = new Subject<void>();
 
   /**
@@ -150,5 +154,13 @@ export class DateNavigationService {
    */
   get focusedDayChange(): Observable<DayModel> {
     return this._focusedDayChange.asObservable();
+  }
+
+  private _filterDateChange: BehaviorSubject<(date: Date | null) => boolean> = new BehaviorSubject<
+    (date: Date | null) => boolean
+  >(() => false);
+
+  get filterDateChange(): Observable<(date: Date | null) => boolean> {
+    return this._filterDateChange.asObservable();
   }
 }

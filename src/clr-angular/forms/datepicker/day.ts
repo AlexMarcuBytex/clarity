@@ -4,7 +4,7 @@
  * The full license information can be found in LICENSE in the root directory of this project.
  */
 
-import { Component, Input } from '@angular/core';
+import { Component, Input, KeyValueDiffers } from '@angular/core';
 
 import { IfOpenService } from '../../utils/conditional/if-open.service';
 
@@ -47,6 +47,13 @@ export class ClrDay {
 
   @Input('clrDayView')
   public set dayView(day: DayViewModel) {
+    this._dateNavigationService.filterDateChange.subscribe(filter => {
+      console.log('Day filter:', filter(day.dayModel.toDate()));
+
+      if (!filter(day.dayModel.toDate())) {
+        day.isDisabled = true;
+      }
+    });
     this._dayView = day;
     this.dayString = this._dayView.dayModel.toDateString();
   }

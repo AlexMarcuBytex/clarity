@@ -49,6 +49,7 @@ import { ClrCommonStringsService } from '../../utils/i18n/common-strings.service
                 class="calendar-btn year"
                 [attr.tabindex]="getTabIndex(year)"
                 [class.is-selected]="year === calendarYear"
+                [class.is-disabled]="disableYear(year)"
                 (click)="changeYear(year)">
                 {{year}}
             </button>
@@ -59,6 +60,7 @@ import { ClrCommonStringsService } from '../../utils/i18n/common-strings.service
   },
 })
 export class ClrYearpicker implements AfterViewInit {
+  private filter;
   constructor(
     private _dateNavigationService: DateNavigationService,
     private _viewManagerService: ViewManagerService,
@@ -69,6 +71,9 @@ export class ClrYearpicker implements AfterViewInit {
     this.yearRangeModel = new YearRangeModel(this.calendarYear);
     this._focusedYear = this.calendarYear;
     this.updateRange(this.yearRangeModel);
+    this._dateNavigationService.filterDateChange.subscribe(filter => {
+      this.filter = filter;
+    });
   }
 
   get ariaLiveDecadeText(): string {
@@ -164,6 +169,12 @@ export class ClrYearpicker implements AfterViewInit {
       }
     }
     return this._focusedYear === year ? 0 : -1;
+  }
+
+  disableYear(year) {
+    console.log(new Date(year, 0, 0));
+
+    return !this.filter(new Date(year, null, null));
   }
 
   /**
