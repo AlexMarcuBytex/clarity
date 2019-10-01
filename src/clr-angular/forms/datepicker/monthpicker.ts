@@ -31,7 +31,7 @@ import { ViewManagerService } from './providers/view-manager.service';
   },
 })
 export class ClrMonthpicker implements AfterViewInit {
-  private filter;
+  private dateFilter: (date: Date) => boolean;
   constructor(
     private _viewManagerService: ViewManagerService,
     private _localeHelperService: LocaleHelperService,
@@ -41,7 +41,7 @@ export class ClrMonthpicker implements AfterViewInit {
   ) {
     this._focusedMonthIndex = this.calendarMonthIndex;
     this._dateNavigationService.filterDateChange.subscribe(filter => {
-      this.filter = filter;
+      this.dateFilter = filter;
     });
   }
 
@@ -88,8 +88,28 @@ export class ClrMonthpicker implements AfterViewInit {
     return monthIndex === this._focusedMonthIndex ? 0 : -1;
   }
 
+  /**
+   * Disable a month based on restrictions set by the user
+   */
   disableMonth(monthIndex) {
-    return !this.filter(new Date(this.calendarYearIndex, monthIndex + 1, 31));
+    // if no filter is received, do not disable any date
+    if (!this.dateFilter) {
+      return false;
+    }
+
+    const firstOfMonth = new Date(this.calendarYearIndex, monthIndex, 1);
+
+    // If each date in the month is invalid, mark the month as disabled.
+    for (let date = firstOfMonth; date.getMonth() === monthIndex; date = this.nextDay(date)) {
+      if (this.dateFilter(date)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private nextDay(date: Date) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
   }
 
   /**

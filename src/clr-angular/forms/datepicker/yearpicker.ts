@@ -60,7 +60,7 @@ import { ClrCommonStringsService } from '../../utils/i18n/common-strings.service
   },
 })
 export class ClrYearpicker implements AfterViewInit {
-  private filter;
+  private dateFilter: (date: Date) => boolean;
   constructor(
     private _dateNavigationService: DateNavigationService,
     private _viewManagerService: ViewManagerService,
@@ -72,7 +72,7 @@ export class ClrYearpicker implements AfterViewInit {
     this._focusedYear = this.calendarYear;
     this.updateRange(this.yearRangeModel);
     this._dateNavigationService.filterDateChange.subscribe(filter => {
-      this.filter = filter;
+      this.dateFilter = filter;
     });
   }
 
@@ -171,10 +171,28 @@ export class ClrYearpicker implements AfterViewInit {
     return this._focusedYear === year ? 0 : -1;
   }
 
+  /**
+   * Disable a year based on restrictions set by the user
+   */
   disableYear(year) {
-    console.log(new Date(year, 0, 0));
+    // if no filter is received, do not disable any date
+    if (!this.dateFilter) {
+      return false;
+    }
 
-    return !this.filter(new Date(year, null, null));
+    const firstOfYear = new Date(year, 0, 1);
+
+    // If each date in the year is invalid, mark the year as disabled.
+    for (let date = firstOfYear; date.getFullYear() === year; date = this.nextDay(date)) {
+      if (this.dateFilter(date)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private nextDay(date: Date) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
   }
 
   /**

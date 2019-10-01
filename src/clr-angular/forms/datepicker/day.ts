@@ -4,7 +4,7 @@
  * The full license information can be found in LICENSE in the root directory of this project.
  */
 
-import { Component, Input, KeyValueDiffers } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 import { IfOpenService } from '../../utils/conditional/if-open.service';
 
@@ -42,18 +42,17 @@ export class ClrDay {
   ) {}
 
   /**
+   * DateFilter input is used to receive the filter function from the calendar component
+   */
+  @Input('dateFilter') dateFilter: (date: Date) => boolean;
+
+  /**
    * DayViewModel input which is used to build the Day View.
    */
 
   @Input('clrDayView')
   public set dayView(day: DayViewModel) {
-    this._dateNavigationService.filterDateChange.subscribe(filter => {
-      console.log('Day filter:', filter(day.dayModel.toDate()));
-
-      if (!filter(day.dayModel.toDate())) {
-        day.isDisabled = true;
-      }
-    });
+    day.isDisabled = this.disableDay(day);
     this._dayView = day;
     this.dayString = this._dayView.dayModel.toDateString();
   }
@@ -77,5 +76,14 @@ export class ClrDay {
     this._dateNavigationService.notifySelectedDayChanged(day);
     this.dateFormControlService.markAsDirty();
     this._ifOpenService.open = false;
+  }
+
+  disableDay(day: DayViewModel) {
+    if (this.dateFilter) {
+      if (!this.dateFilter(day.dayModel.toDate())) {
+        return true;
+      }
+    }
+    return day.isDisabled;
   }
 }

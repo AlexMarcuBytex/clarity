@@ -156,11 +156,11 @@ export class DateNavigationService {
     return this._focusedDayChange.asObservable();
   }
 
-  private _filterDateChange: BehaviorSubject<(date: Date | null) => boolean> = new BehaviorSubject<
-    (date: Date | null) => boolean
-  >(() => false);
+  private _filterDateChange: BehaviorSubject<(date: Date) => boolean> = new BehaviorSubject<(date: Date) => boolean>(
+    null
+  );
 
-  get filterDateChange(): Observable<(date: Date | null) => boolean> {
+  get filterDateChange(): Observable<(date: Date) => boolean> {
     return this._filterDateChange.asObservable();
   }
 }
